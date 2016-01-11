@@ -27,7 +27,7 @@ public class Greeting {
     }
 
     public Greeting(Long ID, String message, String messageAuthor) {
-        this.greetingid = ID;
+       // this.greetingid = ID;
         this.message = message;
         this.messageauthor = messageAuthor;
     }

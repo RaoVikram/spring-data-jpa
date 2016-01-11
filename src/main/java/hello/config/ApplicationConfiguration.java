@@ -10,32 +10,25 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
 import javax.sql.DataSource;
-import java.util.Properties;
 
-/**
- * Created by vikramra on 12/31/15.
- */
 
 @Configuration
 @EnableAspectJAutoProxy
 @EnableAutoConfiguration
 public class ApplicationConfiguration {
 
-@Value("$(spring.datasource.driver-class-name)")
-private String driverClassName;
-@Value("$(spring.datasource.url)")
-private String url;
-@Value("$(spring.database.username)")
-private String userName;
-@Value("$(spring.database.password)")
-private String password;
-@Value("$(hibernate.hbm2ddl.auto)")
-private String hibernateDDLAutoConfig;
+    @Value("$(spring.datasource.driver-class-name)")
+    private String driverClassName;
+    @Value("$(spring.datasource.url)")
+    private String url;
+    @Value("$(spring.database.username)")
+    private String userName;
+    @Value("$(spring.database.password)")
+    private String password;
+    @Value("$(hibernate.hbm2ddl.auto)")
+    private String hibernateDDLAutoConfig;
 
 
     @Bean
@@ -51,7 +44,7 @@ private String hibernateDDLAutoConfig;
     public Advisor traceAdvisor() {
         AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut();
         pointcut.setExpression("execution(public * org.springframework.data.repository.Repository+.*(..))");
-        return new DefaultPointcutAdvisor(pointcut,customizableTraceInterceptor());
+        return new DefaultPointcutAdvisor(pointcut, customizableTraceInterceptor());
     }
 
     /*@Bean
@@ -89,10 +82,8 @@ private String hibernateDDLAutoConfig;
         basicDataSource.setMinIdle(3);
         basicDataSource.setMaxOpenPreparedStatements(30);
         basicDataSource.setMaxTotal(30);
-     return basicDataSource;
+        return basicDataSource;
     }
-
-
 
 
 }

@@ -1,4 +1,4 @@
-package hello;
+package hello.controller;
 
 import hello.model.Greeting;
 import hello.service.HelloWorldService;
@@ -28,22 +28,27 @@ public class HelloController {
 
     @RequestMapping(value = "/addGreeting", method = RequestMethod.POST, consumes = "application/json")
     public void addPatient(@RequestBody Greeting greeting) {
-      this.helloWorldService.addGreeting(greeting.getMessage(),greeting.getMessageAuthor());
+      helloWorldService.addGreeting(greeting.getMessage(),greeting.getMessageAuthor());
+    }
+
+    @RequestMapping(value="/addAGreeting", method = RequestMethod.POST, consumes = "application/json")
+    public void addAPatient(@RequestBody Greeting greeting){
+        helloWorldService.addAGreeting(greeting.getMessage(),greeting.getMessageAuthor());
     }
 
     @RequestMapping(value="/getGreetings", method = RequestMethod.GET)
     public List<Greeting> getGreetings() throws ExecutionException, InterruptedException {
-       return this.helloWorldService.getGreetings();
+       return helloWorldService.getGreetings();
     }
 
     @RequestMapping(value="/getGreeting", method = RequestMethod.GET)
     public List<Greeting> getGreeting(@RequestParam("author")String author) throws ExecutionException,InterruptedException {
-        return this.helloWorldService.getGreeting(author);
+        return helloWorldService.getGreeting(author);
     }
 
     @RequestMapping(value="/getGreetingById", method = RequestMethod.GET)
     public Greeting getGreetingById(@RequestParam("id") String id){
-        return this.helloWorldService.getGreetingById(id);
+        return helloWorldService.getGreetingById(id);
     }
 
 
