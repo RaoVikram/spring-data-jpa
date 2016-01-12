@@ -1,6 +1,8 @@
 package hello.service;
 
 import hello.entity.Greeting;
+import hello.model.Author;
+import hello.repo.AuthorRepository;
 import hello.repo.GreetingRepository;
 import org.hibernate.Query;
 import org.hibernate.internal.QueryImpl;
@@ -18,41 +20,59 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 @Service
 public class HelloWorldService {
 
     private GreetingRepository greetingRepository;
+    private AuthorRepository authorRepository;
     private EntityManagerFactory entityManagerFactory;
     private EntityManager entityManager;
 
     @Autowired
-    public HelloWorldService(GreetingRepository greetingRepository) {
+    public HelloWorldService(GreetingRepository greetingRepository, AuthorRepository authorRepository) {
         this.greetingRepository = greetingRepository;
+        this.authorRepository = authorRepository;
         entityManagerFactory = Persistence.createEntityManagerFactory("test");
         entityManager = entityManagerFactory.createEntityManager();
     }
 
-    public void addGreeting(String message, String messageAuthor) {
-        greetingRepository.save(new Greeting(UUID.randomUUID().getMostSignificantBits(), message, messageAuthor));
+    public void addGreeting(String message, String messageAuthor, Author author) {
+        greetingRepository.save(new Greeting(message, messageAuthor, new hello.entity.Author(author.getFirstName(), author.getLastName(), author.isAlive())));
+
     }
 
-    public void addAGreeting(String message, String messageAuthor) {
-        Greeting greeting = new Greeting(UUID.randomUUID().getMostSignificantBits(), message, messageAuthor);
-        Long lastID = getLastId();
-        javax.persistence.Query query = entityManager.createNativeQuery("Insert into greeting VALUES (" + lastID + ",'" + greeting.getMessage() + "','" + greeting.getMessageauthor() + "')");
-        TypedQuery<Greeting> typedQuery = (TypedQuery<Greeting>) query;
+    public void addAGreeting(String message, String messageAuthor, Author author) {
+        Greeting greeting = new Greeting(message, messageAuthor, new hello.entity.Author(author.getFirstName(), author.getLastName(), author.isAlive()));
+        Long lastGreetingId = getLastGreetingId();
+        Long lastAuthorId = getLastAuthorId();
+        javax.persistence.Query greetingQuery = entityManager.
+                createNativeQuery("Insert into greeting VALUES (" + lastGreetingId + ",'" + greeting.getMessage() + "','"
+                        + greeting.getMessageauthor() + "',"+ lastAuthorId+ ")");
+        javax.persistence.Query authorQuery = entityManager.
+                createNativeQuery("Insert into author VALUES (" + lastAuthorId + ", '" + author.getFirstName() + "',"
+                        + author.isAlive() + ",'" + author.getLastName() + "')");
+        TypedQuery<Greeting> typedQuery = (TypedQuery<Greeting>) greetingQuery;
         System.out.println("######" + typedQuery.unwrap(SQLQueryImpl.class).getQueryString());
 
         entityManager.getTransaction().begin();
-        query.executeUpdate();
+        authorQuery.executeUpdate();
+        greetingQuery.executeUpdate();
         entityManager.getTransaction().commit();
         System.out.println("######" + typedQuery.unwrap(SQLQueryImpl.class).getQueryString());
     }
 
-    private Long getLastId() {
+
+    private Long getLastAuthorId() {
+        Long id = 1L;
+        for (hello.entity.Author author : authorRepository.findAll()) {
+            id = id <= author.getId() ? id + 1 : id;
+        }
+        return id;
+    }
+
+    private Long getLastGreetingId() {
         Long id = 1L;
         for (Greeting greeting : greetingRepository.findAll()) {
             id = id <= greeting.getGreetingid() ? id + 1 : id;
@@ -108,6 +128,7 @@ public class HelloWorldService {
 
         ((CriteriaQueryImpl) greetingCriteriaQuery).where
                 (cb.equal(greeting.<String>get("messageauthor"), cb.parameter(String.class, "messageauthorparam")));
+
         TypedQuery<Greeting> greetingTypedQuery = entityManager.createQuery(greetingCriteriaQuery);
         greetingTypedQuery.setParameter("messageauthorparam", author);
         System.out.println("######" + greetingTypedQuery.unwrap(Query.class).getQueryString());

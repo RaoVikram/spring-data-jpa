@@ -28,12 +28,12 @@ public class HelloController {
 
     @RequestMapping(value = "/addGreeting", method = RequestMethod.POST, consumes = "application/json")
     public void addPatient(@RequestBody Greeting greeting) {
-      helloWorldService.addGreeting(greeting.getMessage(),greeting.getMessageAuthor());
+      helloWorldService.addGreeting(greeting.getMessage(),greeting.getMessageAuthor(),greeting.getAuthor());
     }
 
     @RequestMapping(value="/addAGreeting", method = RequestMethod.POST, consumes = "application/json")
     public void addAPatient(@RequestBody Greeting greeting){
-        helloWorldService.addAGreeting(greeting.getMessage(),greeting.getMessageAuthor());
+        helloWorldService.addAGreeting(greeting.getMessage(),greeting.getMessageAuthor(),greeting.getAuthor());
     }
 
     @RequestMapping(value="/getGreetings", method = RequestMethod.GET)

@@ -21,14 +21,17 @@ public class Greeting {
     private Long greetingid;
     private String message;
     private String messageauthor;
+    @ManyToOne(cascade = CascadeType.ALL)
+    private Author author;
 
 
     protected Greeting() {
     }
 
-    public Greeting(Long ID, String message, String messageAuthor) {
+    public Greeting(String message, String messageAuthor,Author author) {
         this.message = message;
         this.messageauthor = messageAuthor;
+        this.author = author;
     }
 
     @Override
