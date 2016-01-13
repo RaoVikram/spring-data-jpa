@@ -1,6 +1,5 @@
 package hello.controller;
 
-import hello.model.Author;
 import hello.model.Greeting;
 import hello.service.HelloWorldService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,11 +38,6 @@ public class HelloController {
     @RequestMapping(value = "/getGreetings", method = RequestMethod.GET)
     public List<Greeting> getGreetings() throws ExecutionException, InterruptedException {
         return helloWorldService.getGreetings();
-    }
-
-    @RequestMapping(value = "/getGreeting", method = RequestMethod.GET)
-    public List<Author> getGreeting(@RequestParam("author") String author) throws ExecutionException, InterruptedException {
-        return helloWorldService.getGreeting(author);
     }
 
     @RequestMapping(value = "/getGreetingSpec", method = RequestMethod.GET)

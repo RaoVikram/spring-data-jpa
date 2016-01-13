@@ -103,68 +103,27 @@ public class HelloWorldService {
 
     private void mapGreetings(List<hello.model.Greeting> greetings, Iterable<Greeting> greetingList) throws InterruptedException, ExecutionException {
         for (Greeting greeting : greetingList) {
-            hello.model.Greeting item = new hello.model.Greeting();
-            item.setMessage(greeting.getMessage());
-            item.setMessageAuthor(greeting.getMessageauthor());
+            hello.model.Greeting item = mapGreeting(greeting);
             greetings.add(item);
         }
     }
-
-    private void mapGreeting(List<hello.model.Greeting> greetings, List<Greeting> greetingList) throws InterruptedException, ExecutionException {
-        for (Greeting greeting : greetingList) {
-            hello.model.Greeting item = new hello.model.Greeting();
-            item.setMessage(greeting.getMessage());
-            item.setMessageAuthor(greeting.getMessageauthor());
-            greetings.add(item);
-        }
-    }
-
-    public List<hello.model.Author> getGreeting(String author) throws ExecutionException, InterruptedException {
-        //List<Author> authors = new ArrayList<Author>();
-
-        //mapGreeting(greetings, greetingRepository.findByMessageauthor(author).get());
-        //getGreetingUsingSpecs(author,null);
-        return  getGreetingCriteriaWay(author);
-    }
-
 
     public hello.model.Greeting getGreetingById(String Id) {
         Greeting greeting = greetingRepository.findGreetingByID(Long.valueOf(Id));
-        hello.model.Greeting item = new hello.model.Greeting();
-        item.setMessage(greeting.getMessage());
-        item.setMessageAuthor(greeting.getMessageauthor());
+        hello.model.Greeting item = mapGreeting(greeting);
         return item;
     }
 
-    public List<Author> getGreetingCriteriaWay(String author) throws ExecutionException, InterruptedException {
-        List<Author> authors = new ArrayList<Author>();
-
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<hello.entity.Author> query = cb.createQuery(hello.entity.Author.class);
-        Root<hello.entity.Author> authorRoot = query.from(hello.entity.Author.class);
-
-        ((CriteriaQueryImpl) query).where
-                (cb.equal(authorRoot.<String>get("firstName"), cb.parameter(String.class, "firstname")));
-
-        TypedQuery<hello.entity.Author> greetingTypedQuery = entityManager.createQuery(query);
-        greetingTypedQuery.setParameter("firstname", author);
-        System.out.println("######" + greetingTypedQuery.unwrap(Query.class).getQueryString());
-        List<hello.entity.Author> result = greetingTypedQuery.getResultList();
-        mapAuthor(authors, result);
-        System.out.println("######" + greetingTypedQuery.unwrap(QueryImpl.class).getQueryString());
-
-        return authors;
-
-    }
-
-    private void mapAuthor(List<Author> authors, List<hello.entity.Author> result) {
-        for ( hello.entity.Author author : result) {
-            Author item = new Author();
-            item.setAlive(author.isAlive());
-            item.setFirstName(author.getFirstName());
-            item.setLastName(author.getLastName());
-            authors.add(item);
-        }
+    private hello.model.Greeting mapGreeting(Greeting greeting) {
+        hello.model.Greeting item = new hello.model.Greeting();
+        item.setMessage(greeting.getMessage());
+        item.setMessageAuthor(greeting.getMessageauthor());
+        Author author = new Author();
+        author.setAlive(greeting.getAuthor().isAlive());
+        author.setFirstName(greeting.getAuthor().getFirstName());
+        author.setLastName(greeting.getAuthor().getLastName());
+        item.setAuthor(author);
+        return item;
     }
 }
 

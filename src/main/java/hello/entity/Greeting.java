@@ -16,7 +16,7 @@ public class Greeting {
 
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.TABLE)
     @Column(name = "greetingid")
     private Long greetingid;
     private String message;
