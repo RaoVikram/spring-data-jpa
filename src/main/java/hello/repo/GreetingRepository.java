@@ -3,6 +3,7 @@ package hello.repo;
 import hello.entity.Greeting;
 import hello.transact.Transact;
 import org.jboss.logging.annotations.Param;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.scheduling.annotation.Async;
@@ -12,11 +13,8 @@ import javax.persistence.PostPersist;
 import java.util.List;
 import java.util.concurrent.Future;
 
-/**
- * Created by vikramra on 12/11/15.
- */
 @Repository
-public interface GreetingRepository extends CrudRepository<Greeting,Long>{
+public interface GreetingRepository extends CrudRepository<Greeting,Long>,JpaSpecificationExecutor {
     @Async
     Future<List<Greeting>> findByMessageauthor(String messageauthor);
 

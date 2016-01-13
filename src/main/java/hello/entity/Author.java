@@ -10,13 +10,14 @@ import javax.persistence.*;
 public class Author {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @Column(name = "firstname")
     private String firstName;
-
+    @Column(name = "lastname")
     private String lastName;
-
+    @Column(name = "isalive")
     private boolean isAlive;
 
     protected Author(){
