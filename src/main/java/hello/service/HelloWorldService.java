@@ -4,10 +4,8 @@ import hello.entity.Greeting;
 import hello.model.Author;
 import hello.repo.AuthorRepository;
 import hello.repo.GreetingRepository;
-import org.hibernate.Query;
 import org.hibernate.internal.QueryImpl;
 import org.hibernate.internal.SQLQueryImpl;
-import org.hibernate.jpa.criteria.CriteriaQueryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import spec.GreetingSpecification;
@@ -52,7 +50,7 @@ public class HelloWorldService {
         Long lastAuthorId = getLastAuthorId();
         javax.persistence.Query greetingQuery = entityManager.
                 createNativeQuery("Insert into greeting VALUES (" + lastGreetingId + ",'" + greeting.getMessage() + "','"
-                        + greeting.getMessageauthor() + "',"+ lastAuthorId+ ")");
+                        + greeting.getMessageauthor() + "'," + lastAuthorId + ")");
         javax.persistence.Query authorQuery = entityManager.
                 createNativeQuery("Insert into author VALUES (" + lastAuthorId + ", '" + author.getFirstName() + "',"
                         + author.isAlive() + ",'" + author.getLastName() + "')");
@@ -66,15 +64,16 @@ public class HelloWorldService {
         System.out.println("######" + typedQuery.unwrap(SQLQueryImpl.class).getQueryString());
     }
 
-    public List<hello.model.Greeting> getGreetingUsingSpecs(String messageAuthor,String message) throws ExecutionException, InterruptedException {
-       List<hello.model.Greeting> greetings = new ArrayList<>();
-        Map map= new HashMap<>();
-        if(message!=null)
-            map.put("message",message);
-        if(messageAuthor!=null)
-            map.put("messageauthor",messageAuthor);
+    public List<hello.model.Greeting> getGreetingUsingSpecs(String messageAuthor, String message) throws ExecutionException, InterruptedException {
+        List<hello.model.Greeting> greetings = new ArrayList<>();
+        Map map = new HashMap<>();
+        if (message != null)
+            map.put("message", message);
+        if (messageAuthor != null)
+            map.put("messageauthor", messageAuthor);
         GreetingSpecification greetingSpecification = new GreetingSpecification(map);
-        mapGreetings(greetings,greetingRepository.findAll(greetingSpecification));
+        mapGreetings(greetings, greetingRepository.findAll(greetingSpecification));
+        getGreetingsJoins(message, messageAuthor);
         return greetings;
     }
 
@@ -125,5 +124,22 @@ public class HelloWorldService {
         item.setAuthor(author);
         return item;
     }
+
+    public List<hello.model.Greeting> getGreetingsJoins(String message, String firstName) throws ExecutionException, InterruptedException {
+
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Greeting> query = cb.createQuery(Greeting.class);
+        Root<Greeting> gRoot = query.from(Greeting.class);
+        query.select(gRoot).where(cb.equal(gRoot.join("author").get("id"), 1));
+
+        TypedQuery<Greeting> typedQuery = entityManager.createQuery(query);
+        System.out.println("### " + typedQuery.unwrap(QueryImpl.class).toString());
+        List<Greeting> greetings = typedQuery.getResultList();
+        List<hello.model.Greeting> greetingList = new ArrayList<>();
+        mapGreetings(greetingList, greetings);
+        return greetingList;
+    }
+
+
 }
 

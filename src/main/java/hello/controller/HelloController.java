@@ -50,5 +50,8 @@ public class HelloController {
         return helloWorldService.getGreetingById(id);
     }
 
-
+     @RequestMapping(value="/getGreetingByJoin", method =RequestMethod.GET)
+    public List<Greeting> getGreetingByJoin(@RequestParam("author") String author, @RequestParam("message") String messsage) throws ExecutionException, InterruptedException {
+         return helloWorldService.getGreetingsJoins(author, messsage);
+     }
 }

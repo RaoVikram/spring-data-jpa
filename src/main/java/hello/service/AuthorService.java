@@ -49,6 +49,7 @@ public class AuthorService {
         CriteriaQuery<Author> query = cb.createQuery(hello.entity.Author.class);
         Root<Author> authorRoot = query.from(hello.entity.Author.class);
 
+
         ((CriteriaQueryImpl) query).where
                 (cb.equal(authorRoot.<String>get("firstName"), cb.parameter(String.class, "firstname")));
 
